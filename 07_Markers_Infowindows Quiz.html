@@ -1,52 +1,120 @@
 <!-- This is the corresponding "starter code" for 07_Markers/Infowindows in Udacity and Google's Maps
 API Course, Lesson 1 -->
 <html>
- <head>
+  <head>
  <!-- styles put here, but you can include a CSS file and reference it instead! -->
-   <style type="text/css">
-     html, body { height: 100%; margin: 0; padding: 0; }
-     #map { height: 100%; }
+   <style>
+     html,
+     body {
+       font-family: Arial, sans-serif;
+       height: 100%;
+       margin: 0;
+       padding: 0;
+     }
+
+     .container {
+       height: 100%;
+       position: relative;
+     }
+
+     input {
+       font-size: 12px;
+     }
+
+     h1 {
+       color: #525454;
+       font-size: 22px;
+       margin: 0 0 10px 0;
+       text-align: center;
+     }
+
+     #hide-listings,
+     #show-listings {
+       width: 48%;
+     }
+
+     #map {
+       bottom:0px;
+       height: 100%;
+       left: 362px;
+       position: absolute;
+       right: 0px;
+     }
+
+     .options-box {
+       background: #fff;
+       border: 1px solid #999;
+       border-radius: 3px;
+       height: 100%;
+       line-height: 35px;
+       padding: 10px 10px 30px 10px;
+       text-align: left;
+       width: 340px;
+     }
    </style>
- </head>
- <body>
-   <div id="map"></div>
-   <script type="text/javascript">
+  </head>
+  <body>
+    <div class="container">
+      <div class="options-box">
+        <h1>Find Your New NYC Home</h1>
+        <div>
+          <input id="show-listings" type="button" value="Show Listings">
+          <input id="hide-listings" type="button" value="Hide Listings">
+        </div>
+      </div>
+      <div id="map"></div>
+    </div>
+    <script type="text/javascript">
      // Create a map variable
-     var map;
+      var map;
+
+     // Create a marker variable.
+      var markers = [];
      // Function to initialize the map within the map div
      function initMap() {
 
-       map = new google.maps.Map(document.getElementById('map'), {
-         center: {lat: 40.74135, lng: -73.99802},
-         zoom: 14
-       });
+        var styles =
+          [{"featureType":"administrative","elementType":"all","stylers":[{"visibility":"on"},{"color":"#ffffff"}]},{"featureType":"administrative","elementType":"labels","stylers":[{"visibility":"off"},{"color":"#ffffff"}]},{"featureType":"administrative","elementType":"labels.text","stylers":[{"visibility":"on"},{"color":"#ffffff"},{"weight":"0.96"}]},{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"color":"#444444"}]},{"featureType":"administrative","elementType":"labels.text.stroke","stylers":[{"visibility":"off"}]},{"featureType":"administrative.country","elementType":"labels.text","stylers":[{"visibility":"on"}]},{"featureType":"administrative.country","elementType":"labels.text.fill","stylers":[{"color":"#293262"}]},{"featureType":"administrative.country","elementType":"labels.text.stroke","stylers":[{"visibility":"off"}]},{"featureType":"administrative.province","elementType":"all","stylers":[{"visibility":"on"}]},{"featureType":"administrative.province","elementType":"labels","stylers":[{"visibility":"on"}]},{"featureType":"administrative.province","elementType":"labels.text","stylers":[{"visibility":"on"},{"color":"#293262"}]},{"featureType":"administrative.province","elementType":"labels.text.fill","stylers":[{"color":"#293262"},{"visibility":"on"}]},{"featureType":"administrative.province","elementType":"labels.text.stroke","stylers":[{"visibility":"off"}]},{"featureType":"administrative.locality","elementType":"labels","stylers":[{"visibility":"on"},{"color":"#ffffff"}]},{"featureType":"administrative.locality","elementType":"labels.text","stylers":[{"visibility":"on"},{"color":"#ffffff"}]},{"featureType":"administrative.locality","elementType":"labels.text.stroke","stylers":[{"visibility":"off"}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#e0ab5c"}]},{"featureType":"poi","elementType":"geometry","stylers":[{"visibility":"off"}]},{"featureType":"poi","elementType":"labels","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"all","stylers":[{"saturation":-100},{"lightness":45},{"visibility":"simplified"}]},{"featureType":"road.highway","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"road.arterial","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"road.arterial","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#293262"},{"visibility":"on"}]},{"featureType":"water","elementType":"labels","stylers":[{"visibility":"off"}]}];
 
-       // Create a single latLng literal object.
-       var singleLatLng = {lat: 40.74135, lng: -73.99802};
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 40.74135, lng: -73.99802},
+          zoom: 14,
+          styles: styles,
+          mapTypeControl: false
+        });
 
-       // TODO: Create a single marker appearing on initialize -
-       // Create it with the position of the singleLatLng,
-       // on the map, and give it your own title!
-       var marker = new google.maps.Marker({
-          position: singleLatLng,
-          map: map,
-          title: "First marker"
-       });
+         // Create a single latLng literal object.
+        var locations = [
+          {title: 'Park Ave Penthouse', location: {lat: 40.7713024, lng: -73.9632393}},
+          {title: 'Chelsea Loft', location: {lat: 40.7444883, lng: -73.9949465}},
+          {title: 'Union Square Open Floor Plan', location: {lat: 40.7347062, lng: -73.9895759}},
+          {title: 'East Village Hip Studio', location: {lat: 40.7281777, lng: -73.984377}},
+          {title: 'TriBeCa Artsy Bachelor Pad', location: {lat: 40.7195264, lng: -74.0089934}},
+          {title: 'Chinatown Homey Space', location: {lat: 40.7180628, lng: -73.9961237}}
+        ]
 
-       // TODO: create a single infowindow, with your own content.
-       // It must appear on the marker
-       var infowindow = new google.maps.InfoWindow({
-          content: singleLatLng
-       });
+         // TODO: Create a single marker appearing on initialize -
+         // Create it with the position of the singleLatLng,
+         // on the map, and give it your own title!
+         var marker = new google.maps.Marker({
+            position: locations,
+            map: map,
+            title: "First marker"
+         });
 
-       // TODO: create an EVENT LISTENER so that the infowindow opens when
-       // the marker is clicked!
-       marker.addListener("click", function() {
-          infowindow.open(map, marker);
-       });
-     }
+         // TODO: create a single infowindow, with your own content.
+         // It must appear on the marker
+         var infowindow = new google.maps.InfoWindow();
 
-   </script>
+         // TODO: create an EVENT LISTENER so that the infowindow opens when
+         // the marker is clicked!
+         marker.addListener("click", function() {
+            infowindow.open(this, infowindow);
+         });
+       }
+
+    </script>
+
    <!--TODO: Insert your API Key in the below call to load the API.-->
    <script async defer
      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC08YNs5B16Dzh0E4fyDW9oGlIsaINZUQE&callback=initMap">
